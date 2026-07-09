@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vivere — Living Landing Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aboreto&family=Work+Sans:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --ink-soft: #2d2620;
+  --cream: #f0e6d2;
+  --paper: #e6dabd;
+  --gold: #b8935a;
+  --terra: #a8492a;
+  --muted: #7d7565;
+  --line: rgba(26, 20, 16, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Work Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* === Grain texture for editorial feel === */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* === Navigation — transparent on hero, solid on scroll === */
+.nav {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: calc(100% - 40px);
+  max-width: 1180px;
+  padding: 14px 14px 14px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  box-shadow: none;
+  color: var(--ink);
+  transition:
+    background 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    backdrop-filter 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    padding 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav--solid {
+  padding: 12px 12px 12px 28px;
+  background: rgba(240, 230, 210, 0.92);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border-color: rgba(26, 20, 16, 0.08);
+  box-shadow: 0 8px 32px rgba(26, 20, 16, 0.07), 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.nav-logo {
+  font-family: 'Aboreto', serif;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: start;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 400;
+  justify-self: center;
+}
+
+.nav-links a {
+  padding: 4px 0;
+  transition: opacity 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: currentColor;
+  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nav-links a.active {
+  opacity: 1;
+}
+.nav-links a.active::after { width: 100%; }
+.nav-links a:hover::after { width: 100%; }
+.nav:not(.nav--solid) .nav-links a { opacity: 0.72; }
+.nav:not(.nav--solid) .nav-links a:hover,
+.nav:not(.nav--solid) .nav-links a.active { opacity: 1; }
+
+.nav-cta {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid rgba(26, 20, 16, 0.35);
+  padding: 13px 24px;
+  border-radius: 100px;
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.nav--solid .nav-cta {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+}
+.nav-cta:hover {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+}
+
+/* === Icons === */
+.icon {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.icon--sm { width: 12px; height: 12px; }
+.icon--lg { width: 18px; height: 18px; }
+
+/* === Hero with parallax hands === */
+.hero-wrap {
+  position: relative;
+  height: 420vh;
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://z-cdn-media.chatglm.cn/files/13e43254-3785-4f8f-9f99-d2da21a004f2.png?auth_key=1882546089-4ce97f6cb9c04f3fa80ce09c84af1bf4-0-de996951000e906c045dba09664f90b1') center/cover no-repeat;
+  z-index: 1;
+  filter: saturate(0.55) brightness(1.05);
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, 
+    rgba(240, 230, 210, 0.78) 0%, 
+    rgba(240, 230, 210, 0.88) 50%, 
+    rgba(240, 230, 210, 0.96) 100%);
+}
+
+/* Subtle drifting clouds effect */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  background: inherit;
+  background-size: cover;
+  opacity: 0.3;
+  animation: drift 60s linear infinite;
+  filter: blur(2px);
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-5%); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  transition: opacity 0.5s ease;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 32px;
+  opacity: 0.75;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: var(--ink-soft);
+  opacity: 0.5;
+}
+
+.hero-title {
+  font-family: 'Aboreto', serif;
+  font-size: clamp(80px, 16vw, 240px);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-weight: 400;
+  position: relative;
+}
+
+.hero-title span {
+  display: inline-block;
+}
+
+.hero-tagline {
+  font-size: 17px;
+  max-width: 540px;
+  margin-top: 36px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.btn {
+  padding: 18px 36px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 500;
+  border-radius: 100px;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--cream);
+}
+.btn-primary:hover {
+  background: var(--terra);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.btn-secondary:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+/* === Hands === */
+.hand {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 95vh;
+  width: 52vw;
+  z-index: 4;
+  pointer-events: none;
+  will-change: transform, opacity;
+  opacity: 1;
+}
+
+.hand-inner {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  mix-blend-mode: multiply;
+  filter: contrast(1.05) saturate(0.85);
+}
+
+.hand-left {
+  left: 0;
+}
+.hand-left .hand-inner {
+  background-image: url('https://z-cdn-media.chatglm.cn/files/a7ee4ea0-5f5a-41f5-900e-5edbf861d28f.png?auth_key=1882546089-9ffbdeaca78c4eaebb3b3e4f2dff0ea4-0-9e336cdb0958a25f475195925ebcff1b');
+  background-position: right center;
+}
+
+.hand-right {
+  right: 0;
+  /* Robotic arm sits slightly lower — like the Sistine gap */
+  top: calc(50% + 5vh);
+}
+.hand-right .hand-inner {
+  background-image: url('https://z-cdn-media.chatglm.cn/files/1ae768c6-8ae1-4a42-9692-ccb41ac1dfd6.png?auth_key=1882546089-56d4c263f84b48b382797bfc8a978e2b-0-6f0442acbe9bcdd5d7fcd5c8c42eeed7');
+  background-position: left center;
+}
+
+/* Circular reveal — expands from the gap between fingers */
+.touch-reveal {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  z-index: 6;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.touch-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  margin: -80px 0 0 -80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 147, 90, 0.22) 0%, rgba(168, 73, 42, 0.08) 45%, transparent 72%);
+  filter: blur(18px);
+  opacity: 0;
+  transform: scale(0.4);
+  will-change: transform, opacity;
+}
+
+.touch-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f7efe0, var(--cream) 55%, #e8dcc8);
+  box-shadow: 0 0 60px rgba(240, 230, 210, 0.6);
+  transform: scale(0);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* === Touch message — appears after circle covers screen === */
+.touch-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.88);
+  z-index: 7;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  width: 90%;
+  max-width: 800px;
+  will-change: transform, opacity;
+}
+
+.touch-message .label {
+  font-size: 11px;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.touch-message .label::before,
+.touch-message .label::after {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--terra);
+}
+
+.touch-message .text {
+  font-family: 'Aboreto', serif;
+  font-size: clamp(32px, 5.5vw, 72px);
+  line-height: 1.1;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.touch-message .subtext {
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 32px;
+  font-weight: 400;
+}
+
+/* === Scroll indicator === */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: opacity 0.4s;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 56px;
+  background: rgba(26, 20, 16, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: var(--ink);
+  animation: scrollPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0% { top: -50%; }
+  100% { top: 100%; }
+}
+
+/* === Sections === */
+.section {
+  padding: 160px 48px;
+  position: relative;
+  z-index: 2;
+}
+
+.section-dark {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 32px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--terra);
+}
+
+.section-dark .eyebrow { color: var(--gold); }
+.section-dark .eyebrow::before { background: var(--gold); }
+
+.h2 {
+  font-family: 'Aboreto', serif;
+  font-size: clamp(40px, 6.5vw, 96px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin-bottom: 40px;
+  font-weight: 400;
+  max-width: 950px;
+}
+
+.lead {
+  font-size: 19px;
+  line-height: 1.65;
+  max-width: 640px;
+  color: var(--ink-soft);
+  font-weight: 300;
+}
+
+.section-dark .lead {
+  color: rgba(240, 230, 210, 0.7);
+}
+
+/* Breathe section */
+.breathe-head {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+
+.breathe-head .h2 {
+  margin-bottom: 0;
+  max-width: none;
+}
+
+.breathe-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.breathe-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.breathe-stat {
+  background: var(--cream);
+  padding: 24px 20px;
+}
+
+.breathe-stat .num {
+  display: block;
+  font-family: 'Aboreto', serif;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+
+.breathe-stat .lbl {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.breathe-visual {
+  border: 1px solid var(--line);
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.breathe-visual-divider {
+  width: 1px;
+  height: 100%;
+  min-height: 72px;
+  background: var(--line);
+  justify-self: center;
+}
+
+.breathe-visual-col .tag {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.breathe-visual-col h3 {
+  font-family: 'Aboreto', serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.breathe-visual-col--live h3 { color: var(--terra); }
+
+/* Sense section */
+.sense-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 56px;
+  margin-top: 96px;
+}
+
+.sense-card {
+  border-top: 1px solid rgba(240, 230, 210, 0.18);
+  padding-top: 36px;
+  position: relative;
+}
+
+.sense-card:hover {
+  transform: none;
+}
+
+.sense-num {
+  font-family: 'Aboreto', serif;
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 32px;
+  letter-spacing: 0.12em;
+}
+
+.sense-title {
+  font-family: 'Aboreto', serif;
+  font-size: 30px;
+  margin-bottom: 22px;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.sense-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(240, 230, 210, 0.6);
+  font-weight: 300;
+}
+
+/* Pulse section */
+.pulse-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 88px;
+  align-items: start;
+}
+
+.pulse-dashboard {
+  background: #221c18;
+  border: 1px solid rgba(240, 230, 210, 0.07);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pulse-dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 32px; right: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 147, 90, 0.35), transparent);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 32px 32px 28px;
+  border-bottom: 1px solid rgba(240, 230, 210, 0.06);
+}
+
+.dashboard-title {
+  font-family: 'Aboreto', serif;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(240, 230, 210, 0.85);
+}
+
+.dashboard-status {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(240, 230, 210, 0.38);
+}
+
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid rgba(240, 230, 210, 0.06);
+}
+
+.metric {
+  padding: 24px 28px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  border-right: 1px solid rgba(240, 230, 210, 0.06);
+}
+.metric:last-child { border-right: none; }
+
+.metric-label {
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(240, 230, 210, 0.38);
+  margin-bottom: 16px;
+}
+
+.metric-value {
+  font-family: 'Aboreto', serif;
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 10px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--cream);
+}
+
+.metric-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: rgba(184, 147, 90, 0.85);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-delta .icon { color: rgba(184, 147, 90, 0.85); }
+.metric-delta.is-down { color: rgba(240, 230, 210, 0.4); }
+.metric-delta.is-down .icon { color: rgba(240, 230, 210, 0.4); }
+
+.dashboard-chart-wrap {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid rgba(240, 230, 210, 0.06);
+}
+
+.dashboard-chart-label {
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(240, 230, 210, 0.32);
+  margin-bottom: 20px;
+}
+
+.dashboard-sparkline {
+  width: 100%;
+  height: 72px;
+  display: block;
+}
+
+.dashboard-sparkline path {
+  fill: none;
+  stroke: rgba(184, 147, 90, 0.55);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  transition: d 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-sparkline path.fill {
+  fill: url(#sparkFill);
+  stroke: none;
+}
+
+.dashboard-feed {
+  padding: 22px 32px 28px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(240, 230, 210, 0.42);
+  font-variant-numeric: tabular-nums;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-feed .time {
+  color: rgba(184, 147, 90, 0.7);
+  flex-shrink: 0;
+}
+
+.dashboard-feed .action {
+  color: rgba(240, 230, 210, 0.65);
+}
+
+/* Method section */
+.method-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  margin-top: 96px;
+}
+
+.step {
+  position: relative;
+  padding-right: 24px;
+}
+
+.step-num {
+  font-family: 'Aboreto', serif;
+  font-size: 88px;
+  line-height: 1;
+  color: var(--terra);
+  opacity: 0.22;
+  margin-bottom: 28px;
+  font-weight: 400;
+}
+
+.step-title {
+  font-family: 'Aboreto', serif;
+  font-size: 26px;
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+
+.step-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 36px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  background-color: var(--terra);
+  opacity: 0.28;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Begin section */
+.begin {
+  text-align: center;
+  padding: 200px 48px;
+  position: relative;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.begin::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(184, 147, 90, 0.14), transparent 60%);
+}
+
+.begin-content {
+  position: relative;
+  z-index: 2;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.begin-content .eyebrow {
+  justify-content: center;
+}
+
+.begin-title {
+  font-family: 'Aboreto', serif;
+  font-size: clamp(48px, 8vw, 128px);
+  line-height: 0.98;
+  margin: 28px 0 36px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.begin-text {
+  font-size: 18px;
+  color: var(--ink-soft);
+  margin-bottom: 56px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.65;
+}
+
+.begin-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 44px;
+  background: var(--ink);
+  color: var(--cream);
+  border-radius: 100px;
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+.begin-cta:hover {
+  background: var(--terra);
+}
+
+.begin-cta .icon {
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.begin-cta:hover .icon {
+  transform: translateX(4px);
+}
+
+/* Footer */
+footer {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 100px 48px 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 64px;
+  max-width: 1320px;
+  margin: 0 auto 80px;
+}
+
+.footer-brand .display {
+  font-family: 'Aboreto', serif;
+  font-size: 56px;
+  margin-bottom: 24px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.footer-brand p {
+  font-size: 14px;
+  color: rgba(240, 230, 210, 0.5);
+  max-width: 320px;
+  line-height: 1.65;
+}
+
+.footer-col h4 {
+  font-family: 'Aboreto', serif;
+  font-size: 13px;
+  margin-bottom: 24px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  font-weight: 400;
+}
+
+.footer-col ul { list-style: none; }
+
+.footer-col li {
+  font-size: 14px;
+  margin-bottom: 14px;
+  color: rgba(240, 230, 210, 0.55);
+  transition: color 0.3s, padding-left 0.3s;
+  cursor: pointer;
+}
+.footer-col li:hover {
+  color: var(--cream);
+  padding-left: 6px;
+}
+
+.footer-bottom {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-top: 40px;
+  border-top: 1px solid rgba(240, 230, 210, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: rgba(240, 230, 210, 0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Reveal animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .nav {
+    width: calc(100% - 24px);
+    top: 14px;
+    padding: 10px 10px 10px 20px;
+    grid-template-columns: 1fr auto;
+  }
+  .nav-links { display: none; }
+  .nav-cta { padding: 12px 18px; }
+  .section { padding: 100px 24px; }
+  .breathe-head { grid-template-columns: 1fr; gap: 48px; }
+  .breathe-stats { grid-template-columns: 1fr; }
+  .breathe-visual { grid-template-columns: 1fr; gap: 28px; }
+  .breathe-visual-divider { display: none; }
+  .pulse-wrap { grid-template-columns: 1fr; gap: 56px; }
+  .sense-grid { grid-template-columns: 1fr; gap: 40px; }
+  .method-steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .step:not(:last-child)::after { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  .hand { height: 55vh; width: 75vw; }
+  .hero-content { padding: 0 22px; }
+  .hero-cta { flex-direction: column; width: 100%; max-width: 320px; }
+  .btn { width: 100%; }
+  .hero-eyebrow::before, .hero-eyebrow::after { width: 16px; }
+  .dashboard-metrics { grid-template-columns: 1fr 1fr; }
+  .metric:nth-child(2) { border-right: none; }
+  .metric:nth-child(3) { border-top: 1px solid rgba(240, 230, 210, 0.06); }
+}
+
+@media (max-width: 560px) {
+  .method-steps { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav-logo">
+    <span>Vivere</span>
+  </div>
+  <div class="nav-links">
+    <a href="#breathe">Breathe</a>
+    <a href="#sense">Sense</a>
+    <a href="#pulse">Pulse</a>
+    <a href="#method">Method</a>
+  </div>
+  <a href="#begin" class="nav-cta"><span>Begin</span></a>
+</nav>
+
+<!-- Hero with parallax hands -->
+<section class="hero-wrap" id="hero">
+  <div class="hero-sticky">
+    <div class="hero-bg"></div>
+
+    <div class="hand hand-left"><div class="hand-inner"></div></div>
+    <div class="hand hand-right"><div class="hand-inner"></div></div>
+
+    <div class="touch-reveal">
+      <div class="touch-halo"></div>
+      <div class="touch-circle"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">A living landing page framework</div>
+      <h1 class="hero-title"><span>Vivere</span></h1>
+      <p class="hero-tagline">A page that watches its own audience — and quietly reshapes itself, moment by moment, toward the conversion you didn't know you were missing.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary">Begin the watch</button>
+        <button class="btn btn-secondary">Watch it breathe</button>
+      </div>
+    </div>
+
+    <div class="touch-message">
+      <div class="label">The touch</div>
+      <div class="text">Where craft meets code.</div>
+      <div class="subtext">Design, alive — intelligence, given form</div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Breathe section -->
+<section class="section" id="breathe">
+  <div class="container">
+    <div class="breathe reveal">
+      <div class="eyebrow">01 — A new species</div>
+      <div class="breathe-head">
+        <h2 class="h2">Landing pages were dead. We gave them a pulse.</h2>
+        <div class="breathe-boxes">
+          <div class="breathe-stats">
+            <div class="breathe-stat">
+              <span class="num">847</span>
+              <span class="lbl">Rewrites / day</span>
+            </div>
+            <div class="breathe-stat">
+              <span class="num">12ms</span>
+              <span class="lbl">Signal response</span>
+            </div>
+            <div class="breathe-stat">
+              <span class="num">0</span>
+              <span class="lbl">Static pages</span>
+            </div>
+          </div>
+          <div class="breathe-visual">
+            <div class="breathe-visual-col">
+              <div class="tag">Before</div>
+              <h3>Shipped &amp; frozen</h3>
+            </div>
+            <div class="breathe-visual-divider"></div>
+            <div class="breathe-visual-col breathe-visual-col--live">
+              <div class="tag">After</div>
+              <h3>Living &amp; listening</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sense section -->
+<section class="section section-dark" id="sense">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">02 — What it senses</div>
+      <h2 class="h2">Three senses. One intention.</h2>
+      <p class="lead">Vivere listens to the page the way a host listens to a room — adjusting light, tone, and posture before a guest ever articulates a need.</p>
+    </div>
+
+    <div class="sense-grid">
+      <div class="sense-card reveal">
+        <div class="sense-num">i.</div>
+        <h3 class="sense-title">Attention</h3>
+        <p class="sense-text">Heatmaps of where eyes linger, where cursors wander, where interest fades. Every glance becomes a quiet vote on what survives the next rewrite.</p>
+      </div>
+      <div class="sense-card reveal">
+        <div class="sense-num">ii.</div>
+        <h3 class="sense-title">Friction</h3>
+        <p class="sense-text">Every micro-stall, every abandoned field, every confused hover is logged as a small wound. Vivere heals them before the next visitor arrives.</p>
+      </div>
+      <div class="sense-card reveal">
+        <div class="sense-num">iii.</div>
+        <h3 class="sense-title">Resonance</h3>
+        <p class="sense-text">Copy variants are quietly tested against one another in real time — no setup, no split-screen. The page finds its own voice by listening to the room.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pulse section -->
+<section class="section section-dark" id="pulse">
+  <div class="container">
+    <div class="pulse-wrap">
+      <div class="reveal">
+        <div class="eyebrow">03 — Live telemetry</div>
+        <h2 class="h2">Your page, in this very second.</h2>
+        <p class="lead">Vivere runs a small, tireless observatory behind every page. What it sees, you see — in plain language, in real time, in moves you can override or let run.</p>
+      </div>
+
+      <div class="pulse-dashboard reveal">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Observatory</div>
+          <div class="dashboard-status">Session active</div>
+        </div>
+
+        <div class="dashboard-metrics">
+          <div class="metric">
+            <div class="metric-label">Conversion</div>
+            <div class="metric-value" id="m-conv">12.4%</div>
+            <div class="metric-delta" id="d-conv">
+              <svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+              <span>2.1% in 1h</span>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Visitors</div>
+            <div class="metric-value" id="m-vis">247</div>
+            <div class="metric-delta">
+              <svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+              <span>18 active</span>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Avg. dwell</div>
+            <div class="metric-value" id="m-dwell">1:42</div>
+            <div class="metric-delta">
+              <svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+              <span>12s</span>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Last rewrite</div>
+            <div class="metric-value" id="m-rew">3s</div>
+            <div class="metric-delta"><span>hero · subhead</span></div>
+          </div>
+        </div>
+
+        <div class="dashboard-chart-wrap">
+          <div class="dashboard-chart-label">Conversion · 24h</div>
+          <svg class="dashboard-sparkline" id="sparkline" viewBox="0 0 400 72" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(184,147,90,0.12)"/>
+                <stop offset="100%" stop-color="rgba(184,147,90,0)"/>
+              </linearGradient>
+            </defs>
+            <path class="fill" id="spark-fill" d=""/>
+            <path id="spark-line" d=""/>
+          </svg>
+        </div>
+
+        <div class="dashboard-feed" id="feed">
+          <span class="time">—</span>
+          <span class="action">Awaiting signal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method section -->
+<section class="section" id="method">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">04 — The method</div>
+      <h2 class="h2">Four movements, endlessly looping.</h2>
+    </div>
+
+    <div class="method-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Listen</h3>
+        <p class="step-text">Every signal — cursor, scroll, hover, hesitation — becomes a data point in a continuous portrait of your audience.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Interpret</h3>
+        <p class="step-text">Vivere weighs signals against intent. It distinguishes confusion from contemplation, indifference from restraint.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Reshape</h3>
+        <p class="step-text">Headlines, order, hierarchy, and tone are rewritten in measured strokes — never reckless, always reversible.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Verify</h3>
+        <p class="step-text">Every change is held accountable to the metrics that matter. If it doesn't lift the page, it doesn't stay.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Begin section -->
+<section class="section begin" id="begin">
+  <div class="begin-content reveal">
+    <div class="eyebrow">Vivere</div>
+    <h2 class="begin-title">Let your page<br>come alive.</h2>
+    <p class="begin-text">Stop shipping static. Start shipping something that listens, learns, and improves itself — every minute your audience is in the room.</p>
+    <a href="#" class="begin-cta">
+      <span>Begin</span>
+      <svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="display">Vivere</div>
+      <p>A living landing page framework that monitors, learns, and reshapes itself for the conversion you didn't know you were missing.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li>Breathe</li>
+        <li>Sense</li>
+        <li>Pulse</li>
+        <li>Method</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li>Manifesto</li>
+        <li>Studio</li>
+        <li>Press</li>
+        <li>Contact</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li>Documentation</li>
+        <li>Changelog</li>
+        <li>Status</li>
+        <li>Pricing</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© Vivere — Always living, never finished.</span>
+    <span>Est. MMXXVI</span>
+  </div>
+</footer>
+
+<script>
+// === Hero parallax — premium scroll choreography ===
+const heroWrap = document.querySelector('.hero-wrap');
+const handLeft = document.querySelector('.hand-left');
+const handRight = document.querySelector('.hand-right');
+const heroContent = document.querySelector('.hero-content');
+const touchMessage = document.querySelector('.touch-message');
+const touchCircle = document.querySelector('.touch-circle');
+const touchHalo = document.querySelector('.touch-halo');
+const scrollIndicator = document.querySelector('.scroll-indicator');
+
+const LERP = 0.08;
+const MAX_HAND_OFFSET = 24;   // vw — hands visible but not at the edges
+const MIN_HAND_GAP = 7;       // vw — tight Sistine gap, fingers never touch
+const ROBOT_DROP = 5;         // vh — robot arm lower than human
+
+let targetScroll = 0;
+let smoothScroll = 0;
+let animating = false;
+
+function clamp(v, min, max) {
+  return Math.min(max, Math.max(min, v));
+}
+
+function easeInOutSine(t) {
+  return -(Math.cos(Math.PI * t) - 1) / 2;
+}
+
+function easeInOutQuint(t) {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+}
+
+function easeInOutQuart(t) {
+  return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+}
+
+function mapRange(value, inMin, inMax, outMin, outMax, easeFn = (t) => t) {
+  if (value <= inMin) return outMin;
+  if (value >= inMax) return outMax;
+  const t = easeFn((value - inMin) / (inMax - inMin));
+  return outMin + t * (outMax - outMin);
+}
+
+function getTargetScroll() {
+  const rect = heroWrap.getBoundingClientRect();
+  const total = heroWrap.offsetHeight - window.innerHeight;
+  return clamp(-rect.top / total, 0, 1);
+}
+
+function tickHero() {
+  targetScroll = getTargetScroll();
+  smoothScroll += (targetScroll - smoothScroll) * LERP;
+  if (Math.abs(targetScroll - smoothScroll) < 0.0002) smoothScroll = targetScroll;
+
+  const s = smoothScroll;
+
+  // Hands: visible from the start, converge slowly across most of the hero
+  const handProgress = mapRange(s, 0, 0.68, 0, 1, easeInOutSine);
+  const spread = MIN_HAND_GAP + (1 - handProgress) * (MAX_HAND_OFFSET - MIN_HAND_GAP);
+  handLeft.style.transform = `translateY(-50%) translateX(-${spread}vw)`;
+  handRight.style.transform = `translateY(calc(-50% + ${ROBOT_DROP}vh)) translateX(${spread}vw)`;
+
+  // Hero copy fades gently once hands begin their journey
+  const contentOpacity = mapRange(s, 0.06, 0.28, 1, 0, easeInOutSine);
+  heroContent.style.opacity = contentOpacity;
+
+  scrollIndicator.style.opacity = mapRange(s, 0.04, 0.18, 1, 0, easeInOutSine);
+
+  // Phase 1 — soft halo breathes in at the gap (before the bloom)
+  const haloOpacity = mapRange(s, 0.44, 0.56, 0, 1, easeInOutSine);
+  const haloScale = mapRange(s, 0.44, 0.56, 0.35, 1.15, easeInOutSine);
+  touchHalo.style.opacity = haloOpacity * 0.85;
+  touchHalo.style.transform = `scale(${haloScale})`;
+
+  // Phase 2 — circle blooms slowly; ease-in-out avoids the sudden pop
+  let circleScale = 0;
+  let circleOpacity = 0;
+  if (s < 0.52) {
+    circleScale = 0;
+    circleOpacity = 0;
+  } else if (s < 0.58) {
+    const t = easeInOutSine((s - 0.52) / 0.06);
+    circleScale = t * 1.8;
+    circleOpacity = t * 0.35;
+  } else if (s < 0.88) {
+    const t = easeInOutQuart((s - 0.58) / 0.30);
+    circleScale = 1.8 + t * 178;
+    circleOpacity = 0.35 + t * 0.65;
+  } else {
+    circleScale = 180;
+    circleOpacity = 1;
+  }
+  touchCircle.style.transform = `scale(${circleScale})`;
+  touchCircle.style.opacity = circleOpacity;
+
+  // Hands dissolve as the circle takes over
+  const handOpacity = mapRange(s, 0.56, 0.76, 1, 0, easeInOutSine);
+  handLeft.style.opacity = handOpacity;
+  handRight.style.opacity = handOpacity;
+
+  // Phase 3 — message appears only once the screen is mostly covered
+  let msgOpacity = 0;
+  let msgScale = 0.92;
+  if (s >= 0.74 && s < 0.86) {
+    const t = easeInOutQuart((s - 0.74) / 0.12);
+    msgOpacity = t;
+    msgScale = 0.92 + t * 0.08;
+  } else if (s >= 0.86 && s < 0.94) {
+    msgOpacity = 1;
+    msgScale = 1;
+  } else if (s >= 0.94) {
+    const t = (s - 0.94) / 0.06;
+    msgOpacity = 1 - easeInOutSine(t);
+    msgScale = 1 + t * 0.03;
+  }
+  touchMessage.style.opacity = msgOpacity;
+  touchMessage.style.transform = `translate(-50%, -50%) scale(${msgScale})`;
+
+  const rect = heroWrap.getBoundingClientRect();
+  const inView = rect.bottom > -100 && rect.top < window.innerHeight + 100;
+  const needsUpdate = Math.abs(targetScroll - smoothScroll) > 0.0002;
+
+  if (inView || needsUpdate) {
+    requestAnimationFrame(tickHero);
+  } else {
+    animating = false;
+  }
+}
+
+function startHeroLoop() {
+  if (!animating) {
+    animating = true;
+    requestAnimationFrame(tickHero);
+  }
+}
+
+window.addEventListener('scroll', startHeroLoop, { passive: true });
+window.addEventListener('resize', startHeroLoop);
+targetScroll = getTargetScroll();
+smoothScroll = targetScroll;
+startHeroLoop();
+
+// === Nav — transparent on hero, solid after scroll ===
+const nav = document.getElementById('nav');
+
+function updateNav() {
+  const threshold = window.innerHeight * 0.55;
+  const solid = window.scrollY > threshold;
+  nav.classList.toggle('nav--solid', solid);
+
+  document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+  if (!solid) return;
+
+  const sections = ['breathe', 'sense', 'pulse', 'method'];
+  let current = sections[0];
+  for (const id of sections) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = id;
+  }
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+  });
+}
+
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+// === Reveal on scroll ===
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 90);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+reveals.forEach(el => revealObserver.observe(el));
+
+// === Pulse dashboard — refined telemetry ===
+const sparkLine = document.getElementById('spark-line');
+const sparkFill = document.getElementById('spark-fill');
+const feed = document.getElementById('feed');
+const mConv = document.getElementById('m-conv');
+const mVis = document.getElementById('m-vis');
+const mDwell = document.getElementById('m-dwell');
+const mRew = document.getElementById('m-rew');
+const dConv = document.getElementById('d-conv');
+
+const SPARK_W = 400;
+const SPARK_H = 72;
+const SPARK_PAD = 6;
+const SPARK_LERP = 0.035;
+const SPARK_POINTS = 32;
+
+let sparkTarget = Array.from({ length: SPARK_POINTS }, (_, i) => 0.35 + Math.sin(i * 0.4) * 0.15 + Math.random() * 0.08);
+let sparkDisplay = [...sparkTarget];
+let sparkAnimating = false;
+
+function buildSmoothPath(values) {
+  const innerW = SPARK_W - SPARK_PAD * 2;
+  const innerH = SPARK_H - SPARK_PAD * 2;
+  const pts = values.map((v, i) => ({
+    x: SPARK_PAD + (i / (values.length - 1)) * innerW,
+    y: SPARK_PAD + (1 - v) * innerH,
+  }));
+
+  let line = `M ${pts[0].x},${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const cx = (pts[i].x + pts[i + 1].x) / 2;
+    line += ` C ${cx},${pts[i].y} ${cx},${pts[i + 1].y} ${pts[i + 1].x},${pts[i + 1].y}`;
+  }
+
+  const fill = `${line} L ${SPARK_W - SPARK_PAD},${SPARK_H - SPARK_PAD} L ${SPARK_PAD},${SPARK_H - SPARK_PAD} Z`;
+  return { line, fill };
+}
+
+function renderSparkline(values) {
+  const { line, fill } = buildSmoothPath(values);
+  sparkLine.setAttribute('d', line);
+  sparkFill.setAttribute('d', fill);
+}
+
+function tickSparkline() {
+  let settling = false;
+  for (let i = 0; i < SPARK_POINTS; i++) {
+    const diff = sparkTarget[i] - sparkDisplay[i];
+    if (Math.abs(diff) > 0.0004) {
+      sparkDisplay[i] += diff * SPARK_LERP;
+      settling = true;
+    } else {
+      sparkDisplay[i] = sparkTarget[i];
+    }
+  }
+  renderSparkline(sparkDisplay);
+  if (settling) {
+    requestAnimationFrame(tickSparkline);
+  } else {
+    sparkAnimating = false;
+  }
+}
+
+function startSparklineLoop() {
+  if (!sparkAnimating) {
+    sparkAnimating = true;
+    requestAnimationFrame(tickSparkline);
+  }
+}
+
+renderSparkline(sparkDisplay);
+
+setInterval(() => {
+  sparkTarget.shift();
+  sparkTarget.push(Math.max(0.12, Math.min(0.88, sparkTarget[sparkTarget.length - 1] + (Math.random() - 0.48) * 0.04)));
+  startSparklineLoop();
+}, 3600);
+
+let conv = 12.4, vis = 247, dwellSec = 102, rew = 3;
+
+function setDelta(el, value, suffix) {
+  const up = value >= 0;
+  el.classList.toggle('is-down', !up);
+  el.innerHTML = up
+    ? `<svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg><span>${Math.abs(value).toFixed(1)}${suffix}</span>`
+    : `<svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><span>${Math.abs(value).toFixed(1)}${suffix}</span>`;
+}
+
+setInterval(() => {
+  conv += (Math.random() - 0.48) * 0.15;
+  conv = Math.max(9.2, Math.min(16.5, conv));
+  mConv.textContent = conv.toFixed(1) + '%';
+  setDelta(dConv, conv - 12.4, '% in 1h');
+
+  vis += Math.floor((Math.random() - 0.5) * 3);
+  vis = Math.max(210, Math.min(290, vis));
+  mVis.textContent = vis;
+
+  dwellSec += Math.floor((Math.random() - 0.5) * 2);
+  dwellSec = Math.max(85, Math.min(145, dwellSec));
+  const min = Math.floor(dwellSec / 60);
+  const sec = dwellSec % 60;
+  mDwell.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+
+  rew = rew >= 8 ? 1 : rew + 1;
+  mRew.textContent = rew + 's';
+}, 4000);
+
+const feedActions = [
+  { action: 'Rewrote', target: 'hero subhead' },
+  { action: 'Shifted', target: 'cta tone → terra' },
+  { action: 'Promoted', target: 'headline variant B' },
+  { action: 'Reordered', target: 'section hierarchy' },
+  { action: 'Shortened', target: 'form field labels' },
+];
+
+function updateFeed() {
+  const now = new Date();
+  const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  const entry = feedActions[Math.floor(Math.random() * feedActions.length)];
+  feed.innerHTML = `<span class="time">${time}</span><span class="action">${entry.action}</span><span>${entry.target}</span>`;
+}
+
+updateFeed();
+setInterval(updateFeed, 6000);
+
+// === Smooth scroll for nav anchors ===
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href === '#') return;
+    const target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
